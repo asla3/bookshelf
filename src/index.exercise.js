@@ -6,9 +6,29 @@ import '@reach/dialog/styles.css'
 
 import {Logo} from './components/logo'
 
-const REGISTER_DIALOG_LABEL_ID = 'register-dialog-label'
+const LoginForm = ({buttonText, onSubmit}) => {
+  const handleSubmit = event => {
+    event.preventDefault()
+    const {username, password} = event.target.elements
+    onSubmit({username: username.value, password: password.value})
+  }
 
-const LOGIN_DIALOG_LABEL_ID = 'login-dialog-label'
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="username">Username</label>
+        <input type="text" id="username" required />
+      </div>
+      <div>
+        <label htmlFor="password">Password</label>
+        <input type="password" id="password" required />
+      </div>
+      <div>
+        <button type="submit">{buttonText}</button>
+      </div>
+    </form>
+  )
+}
 
 const App = () => {
   const [currentModal, setCurrentModal] = React.useState('none')
@@ -17,25 +37,41 @@ const App = () => {
 
   const closeModal = getModalUpdater('none')
 
+  const login = formData => {
+    console.log('login', formData)
+  }
+
+  const register = formData => {
+    console.log('register', formData)
+  }
+
   return (
     <div>
       <Logo />
       <h1>Bookshelf</h1>
-      <button onClick={getModalUpdater('login')}>Login</button>
-      <button onClick={getModalUpdater('register')}>Register</button>
+      <div>
+        <button onClick={getModalUpdater('login')}>Login</button>
+      </div>
+      <div>
+        <button onClick={getModalUpdater('register')}>Register</button>
+      </div>
       <Dialog
         isOpen={currentModal === 'register'}
         onDismiss={closeModal}
-        aria-labelledby={REGISTER_DIALOG_LABEL_ID}
+        aria-label="Registration form"
       >
-        <h4 id={REGISTER_DIALOG_LABEL_ID}>Register</h4>
+        <button onClick={closeModal}>Close</button>
+        <h4>Register</h4>
+        <LoginForm buttonText="Register" onSubmit={register} />
       </Dialog>
       <Dialog
         isOpen={currentModal === 'login'}
         onDismiss={closeModal}
-        aria-labelledby={LOGIN_DIALOG_LABEL_ID}
+        aria-label="Login form"
       >
-        <h4 id={LOGIN_DIALOG_LABEL_ID}>Login</h4>
+        <button onClick={closeModal}>Close</button>
+        <h4>Login</h4>
+        <LoginForm buttonText="Login" onSubmit={login} />
       </Dialog>
     </div>
   )
